@@ -12,7 +12,7 @@ def transcribe(image_path, mode: int, drive=None):
     img = img.enhance(2)
     img = img.convert('1')
     text = pytesseract.image_to_string(img)
-# Modes: 0 -> print; 1 -> save local docx; 2 -> upload to drive
+    # Modes: 0 -> print; 1 -> save local docx; 2 -> upload to drive
     if mode == 0:
         print(text)
 
@@ -26,20 +26,23 @@ def transcribe(image_path, mode: int, drive=None):
         drive_file.Upload()
 
 
-def __main__():
-    # Google api permissions authentication
-    g_auth = GoogleAuth()
-    drive = GoogleDrive(g_auth)
-
+def main():
     # Check for alternate path string
+    drive = None
     try:
         with open('tesseract_cmd') as path_file:
             path = path_file.read()
             pytesseract.pytesseract.tesseract_cmd = path
     except FileNotFoundError:
         print("No alternate file found")
-    transcribe('test data/page.png', 2, drive)
+    path = str(input("Path to img file: "))
+    mode = int(input("Modes: (0 -> print; 1 -> save local docx; 2 -> upload to drive)"))
+    if mode == 2:
+        # Google api permissions authentication
+        g_auth = GoogleAuth()
+        drive = GoogleDrive(g_auth)
+    transcribe(path, mode, drive)
 
 
 if __name__ == '__main__':
-    __main__()
+    main()
