@@ -2,3 +2,5 @@
 Interpreter/
 tesseract_cmd
 -YPZWNDRabAolS1amFVTOMSZ
+__pycache__/
+.vscode/

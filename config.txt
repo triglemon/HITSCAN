@@ -1,1 +1,0 @@
-r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'

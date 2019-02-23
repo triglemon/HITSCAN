@@ -2,15 +2,18 @@ import pytesseract
 from PIL import Image, ImageEnhance, ImageFilter
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
+import cv2
 
 
 # Transcribing image to text
 def transcribe(image_path, mode: int, drive=None):
     with Image.open(image_path) as img_file:
         img = img_file.filter(ImageFilter.MedianFilter())
+    img = img.convert('RGB')
     img = ImageEnhance.Contrast(img)
     img = img.enhance(2)
     img = img.convert('1')
+    img.show()
 
     text = pytesseract.image_to_string(img)
     # Modes: 0 -> print; 1 -> save local docx; 2 -> upload to drive
