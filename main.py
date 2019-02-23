@@ -1,9 +1,7 @@
 import pytesseract
 from PIL import Image, ImageEnhance, ImageFilter
-from docx import document
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
-
 
 g_auth = GoogleAuth()
 drive = GoogleDrive(g_auth)
