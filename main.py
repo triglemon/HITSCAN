@@ -4,6 +4,7 @@ from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
 import drive_auth
 from googleapiclient.http import MediaFileUpload
+import os
 
 
 #g_auth = drive_auth.auth()
@@ -11,7 +12,10 @@ from googleapiclient.http import MediaFileUpload
 g_auth = GoogleAuth()
 drive = GoogleDrive(g_auth)
 
-pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
+try:
+    if os.path.exists("config.txt"):
+        pytesseract.pytesseract.tesseract_cmd = open("config.txt", "r+"
+                                                     ).readlines()[0]
 with Image.open('page.png') as img:
     filtered_img = img.filter(ImageFilter.MedianFilter())
 enhancer = ImageEnhance.Contrast(filtered_img)
