@@ -1,14 +1,17 @@
 import pytesseract
 from PIL import Image, ImageEnhance, ImageFilter
-from docx import document
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
+import drive_auth
+from googleapiclient.http import MediaFileUpload
 
+
+#g_auth = drive_auth.auth()
 
 g_auth = GoogleAuth()
 drive = GoogleDrive(g_auth)
 
-# pytesseract.pytesseract.tesseract_cmd = r'C:\Users\Robert\AppData\Local\Tesseract-OCR\tesseract.exe'
+pytesseract.pytesseract.tesseract_cmd = r'C:\Program Files (x86)\Tesseract-OCR\tesseract.exe'
 with Image.open('page.png') as img:
     filtered_img = img.filter(ImageFilter.MedianFilter())
 enhancer = ImageEnhance.Contrast(filtered_img)
