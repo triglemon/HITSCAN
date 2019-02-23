@@ -3,21 +3,9 @@ from PIL import Image, ImageEnhance, ImageFilter
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
 
-# Google api permissions authentication
-g_auth = GoogleAuth()
-drive = GoogleDrive(g_auth)
-
-# Check for alternate path string
-try:
-    with open('tesseract_cmd') as path_file:
-        path = path_file.read()
-        pytesseract.pytesseract.tesseract_cmd = path
-except FileNotFoundError:
-    print("No alternate file found")
-
 
 # Transcribing image to text
-def transcribe(image_path, mode: int):
+def transcribe(image_path, mode: int, drive=None):
     with Image.open(image_path) as img_file:
         img = img_file.filter(ImageFilter.MedianFilter())
     img = ImageEnhance.Contrast(img)
@@ -39,8 +27,19 @@ def transcribe(image_path, mode: int):
 
 
 def __main__():
-    transcribe('test data/page.png', 2)
+    # Google api permissions authentication
+    g_auth = GoogleAuth()
+    drive = GoogleDrive(g_auth)
+
+    # Check for alternate path string
+    try:
+        with open('tesseract_cmd') as path_file:
+            path = path_file.read()
+            pytesseract.pytesseract.tesseract_cmd = path
+    except FileNotFoundError:
+        print("No alternate file found")
+    transcribe('test data/page.png', 2, drive)
 
 
-if __name__ == __main__:
+if __name__ == '__main__':
     __main__()
