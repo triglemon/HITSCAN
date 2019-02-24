@@ -78,11 +78,11 @@ def transcribe(image_path, mode: int, drive=None):
         img_list = listdir(image_path)
         text = ""
         for img in img_list:
-            text += pytesseract.image_to_string(image_path + img)
+            text = pytesseract.image_to_string(image_path + img)
             text += "\n**************************************\n"
             with open('output.txt', 'a') as file:
                 file.writelines(str(text.encode('utf-8')))
-                
+                print(text)
     elif mode == 5:
         print(get_best_text(img, 9))
 
