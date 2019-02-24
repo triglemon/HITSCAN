@@ -13,20 +13,25 @@ def get_best_text(image, iter: int):
     for i in range(iter):
         rot = image.rotate( i * rot_angle, expand=1 )
         print("angle = {0}\n".format(i*rot_angle))
-        confs = pytesseract.image_to_data(rot, output_type=pytesseract.Output.DICT)["conf"]
-        
+        # rot = rot.convert("RGB")
+        # confs = pytesseract.image_to_data(rot, output_type=pytesseract.Output.DICT)["conf"]
+
         rot.show()
 
-        #convert non-integer entries to 0
-        for i in range(len(confs)):
-            # print(confs[i], " <- item\n")
-            # print(type(confs[i]), " <- type\n")
-            if type(confs[i]) != int:
-                confs[i] = 0
+        # #convert non-integer entries to 0
+        # for i in range(len(confs)):
+        #     # print(confs[i], " <- item\n")
+        #     # print(type(confs[i]), " <- type\n")
+        #     if type(confs[i]) != int:
+        #         confs[i] = 0
 
-        confidence = sum(confs)/len(confs)
-        print("confidence = {0}, sum = {1}, len = {2}\n".format(confidence, sum(confs), len(confs)))
-        if confidence > best_conf:
+        output = pytesseract.image_to_osd(rot, output_type='dict')
+        confidence1 = output["script_conf"]
+        confidence2 = output["script_conf"]
+        # confidence = sum(confs)/len(confs)
+        # print("confidence = {0}, sum = {1}, len = {2}\n".format(confidence, sum(confs), len(confs)))
+        # print(pytesseract.image_to_osd(rot))
+        if confidence1 + confidence2 > best_conf:
             best_angle = i*rot_angle
     rot = image.rotate(best_angle)
     return pytesseract.image_to_string(rot)
@@ -41,10 +46,6 @@ def transcribe(image_path, mode: int, drive=None):
     img = img.convert('1')
 
     text = pytesseract.image_to_string(img)
-
-    
-
-
 
     # Modes: 0 -> print; 1 -> save local docx; 2 -> upload to drive 3 -> debug
     if mode == 0:
