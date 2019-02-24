@@ -73,6 +73,7 @@ def transcribe(image_path, mode: int, drive=None):
     elif mode == 4:
         print(get_best_text(img, 9))
 
+
 def main():
     # Check for alternate path string
     drive = None
