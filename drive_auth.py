@@ -8,6 +8,7 @@ from google.auth.transport.requests import Request
 # If modifying these scopes, delete the file token.pickle.
 SCOPES = ['https://www.googleapis.com/auth/drive.file']
 
+
 def auth():
     creds = None
     # The file token.pickle stores the user's access and refresh tokens, and is
