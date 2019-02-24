@@ -42,10 +42,6 @@ def transcribe(image_path, mode: int, drive=None):
 
     text = pytesseract.image_to_string(img)
 
-    
-
-
-
     # Modes: 0 -> print; 1 -> save local docx; 2 -> upload to drive 3 -> debug
     if mode == 0:
         print(text)
