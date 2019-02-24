@@ -1,10 +1,12 @@
 import pytesseract
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import ImageEnhance, ImageFilter
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
 from tkinter import *
 import tkinter
 from tkinter import filedialog
+from functools import partial
+import PIL.Image
 
 
 g_auth = GoogleAuth()
@@ -13,8 +15,10 @@ var = None
 
 
 def open_file(tkinter_root):
-    tkinter_root.filename = filedialog.askopenfilename(initialdir="/", title="Select file",
-                                                       filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
+    absolute_path = filedialog.askopenfilename(initialdir="/", title="Select file",
+                                               filetypes=(("jpeg files", "*.jpg"), ("all files", "*.*")))
+    print(absolute_path)
+    tkinter_root.filename = absolute_path.replace("C:/Users/Robert/PycharmProjects/hackerhack/Paper-Scanner/", "")
 
 
 def get_best_text(image, iter: int):
@@ -47,7 +51,7 @@ def get_best_text(image, iter: int):
 # Transcribing image to text
 def transcribe(path, doc_bool, drive_bool, tilt_bool):
     print(path)
-    with Image.open(path) as img:
+    with PIL.Image.open(path) as img:
         img = img.convert('RGB')
     img = img.filter(ImageFilter.MedianFilter())
     img = ImageEnhance.Contrast(img)
@@ -80,10 +84,10 @@ def main():
 
     app = tkinter.Tk()
     app.wm_title('HITSCAN')
+    app.filename = None
 
-    img_button = Button(app, text='Browse', width=5)
+    img_button = Button(app, text='Browse', width=5, command=partial(open_file, app))
     img_button.grid(row=1, column=1)
-    img_button.bind(open_file(app))
 
     doc_var = tkinter.IntVar()
     doc_box = Checkbutton(app, text="Include .docx", variable=doc_var)
@@ -94,12 +98,14 @@ def main():
     drive_box.grid(row=3, column=1)
 
     tilt_var = tkinter.IntVar()
-    tilt_box = Checkbutton(app, text="Include .docx", variable=tilt_var)
+    tilt_box = Checkbutton(app, text="Image has tilt", variable=tilt_var)
     tilt_box.grid(row=4, column=1)
 
-    process_button = Button(app, text="Process", width=5)
+    process_button = Button(app, text="Process", width=5, command=partial(transcribe, *('test data/page.png',
+                                                                                        doc_var.get(),
+                                                                                        drive_var.get(),
+                                                                                        tilt_var.get())))
     process_button.grid(row=5, column=1)
-    process_button.bind(transcribe(app.filename, doc_var.get(), drive_var.get(), tilt_var.get()))
     app.mainloop()
 
 
