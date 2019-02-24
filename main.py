@@ -5,31 +5,63 @@ from pydrive.auth import GoogleAuth
 import cv2
 
 
+def get_best_text(image, iter: int):
+    rot_angle = 90 // iter
+    
+    best_angle = None
+    best_conf = 0
+    for i in range(iter):
+        rot = image.rotate( i * rot_angle, expand=1 )
+        print("angle = {0}\n".format(i*rot_angle))
+        confs = pytesseract.image_to_data(rot, output_type=pytesseract.Output.DICT)["conf"]
+        
+        rot.show()
+
+        #convert non-integer entries to 0
+        for i in range(len(confs)):
+            # print(confs[i], " <- item\n")
+            # print(type(confs[i]), " <- type\n")
+            if type(confs[i]) != int:
+                confs[i] = 0
+
+        confidence = sum(confs)/len(confs)
+        print("confidence = {0}, sum = {1}, len = {2}\n".format(confidence, sum(confs), len(confs)))
+        if confidence > best_conf:
+            best_angle = i*rot_angle
+    rot = image.rotate(best_angle)
+    return pytesseract.image_to_string(rot)
+
 # Transcribing image to text
 def transcribe(image_path, mode: int, drive=None):
-    with Image.open(image_path) as img_file:
-        img = img_file.filter(ImageFilter.MedianFilter())
-    img = img.convert('RGB')
+    with Image.open(image_path) as img:
+        img = img.convert('RGB')
+    img = img.filter(ImageFilter.MedianFilter())
     img = ImageEnhance.Contrast(img)
     img = img.enhance(2)
     img = img.convert('1')
 
     text = pytesseract.image_to_string(img)
+
+    
+
+
+
     # Modes: 0 -> print; 1 -> save local docx; 2 -> upload to drive 3 -> debug
     if mode == 0:
         print(text)
-        img.show()
 
-    if mode == 1:
+    elif mode == 1:
         with open('test data/document.docx', 'w') as file:
             file.write(text)
 
-    if mode == 2:
+    elif mode == 2:
         drive_file = drive.CreateFile({'title': 'Image Text'})
         drive_file.SetContentString(text)
         drive_file.Upload()
     
-    if mode == 3: # debug
+    elif mode == 3: # debug
+        # display image
+        img.show()
         # Get bounding box estimates
         print(pytesseract.image_to_boxes(img))
 
@@ -38,6 +70,8 @@ def transcribe(image_path, mode: int, drive=None):
 
         # Get information about orientation and script detection
         print(pytesseract.image_to_osd(img))
+    elif mode == 4:
+        print(get_best_text(img, 9))
 
 def main():
     # Check for alternate path string
@@ -49,7 +83,7 @@ def main():
     except FileNotFoundError:
         print("No alternate file found")
     path = str(input("Path to img file: "))
-    mode = int(input("Modes: (0 -> print; 1 -> save local docx; 2 -> upload to drive)"))
+    mode = int(input("Modes: 0 -> print; 1 -> save local docx; 2 -> upload to drive; 3 -> debug\n"))
     if mode == 2:
         # Google api permissions authentication
         g_auth = GoogleAuth()
