@@ -39,6 +39,7 @@ def transcribe(image_path, mode: int, drive=None):
         # Get information about orientation and script detection
         print(pytesseract.image_to_osd(img))
 
+
 def main():
     # Check for alternate path string
     drive = None
