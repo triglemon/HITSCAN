@@ -1,10 +1,11 @@
 import pytesseract
-from PIL import Image, ImageEnhance, ImageFilter
+from PIL import ImageEnhance, ImageFilter
 from pydrive.drive import GoogleDrive
 from pydrive.auth import GoogleAuth
 from tkinter import *
 import tkinter
 from tkinter import filedialog
+import PIL.Image
 
 
 g_auth = GoogleAuth()
@@ -47,7 +48,7 @@ def get_best_text(image, iter: int):
 # Transcribing image to text
 def transcribe(path, doc_bool, drive_bool, tilt_bool):
     print(path)
-    with Image.open(path) as img:
+    with PIL.Image.open(path) as img:
         img = img.convert('RGB')
     img = img.filter(ImageFilter.MedianFilter())
     img = ImageEnhance.Contrast(img)

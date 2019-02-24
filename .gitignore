@@ -5,3 +5,5 @@ tesseract_cmd
 __pycache__/
 .vscode/
 test data/
+hitscan.zip
+t/
