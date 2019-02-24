@@ -33,6 +33,7 @@ def get_best_text(image, iter: int):
         # print(pytesseract.image_to_osd(rot))
         if confidence1 + confidence2 > best_conf:
             best_angle = i*rot_angle
+            best_conf = confidence1 + confidence2
     rot = image.rotate(best_angle)
     return pytesseract.image_to_string(rot)
 
